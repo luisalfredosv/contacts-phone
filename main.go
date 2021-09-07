@@ -1,32 +1,30 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"time"
-	"io"
+	
 	"github.com/luisalfredosv/golang-gorilla/routes"
 	"github.com/luisalfredosv/golang-gorilla/utils"
-
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func main(){
-
-	utils.MigrateDB()
-
-	r := mux.NewRouter()
-
-	routes.SetContactsRoutes(r)
-
-	srv:= &http.Server{
-		Handler: r,
-		Addr: "127.0.0.1:9100",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 
-	log.Println("Rining on port  :9100")
+	utils.MigrateDB()
+	r := mux.NewRouter()
+	routes.SetContactsRoutes(r)
 
+	srv := http.Server{
+		Addr: ":4000",
+		Handler: r,
+	}
+
+	log.Println("Runing on port  :4000")
 	log.Fatal(srv.ListenAndServe())
 }
