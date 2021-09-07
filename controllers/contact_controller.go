@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
 	"github.com/luisalfredosv/golang-gorilla/models"
 	"github.com/luisalfredosv/golang-gorilla/utils"
-	"github.com/gorilla/mux"
 )
 
 func GetContact(w http.ResponseWriter, r *http.Request){
@@ -38,6 +40,7 @@ func GetContacts(w http.ResponseWriter, r *http.Request){
 
 func StoreContact(w http.ResponseWriter, r *http.Request){
 	contact := models.Contact{}
+
 	db := utils.GetConnection()
 	defer db.Close()
 
@@ -48,6 +51,25 @@ func StoreContact(w http.ResponseWriter, r *http.Request){
 		utils.SendErr(w, http.StatusBadRequest)
 		return
 	}
+
+	validate := validator.New()
+	err = validate.Struct(contact)
+	
+
+	if err != nil {
+		respError := make([]string, len(err.Error()))
+
+		// resp := models.ErrResponse {
+        //     Errors: ,
+        // }
+		// e := json.NewEncoder(w).Encode(resp.Errors)
+
+		fmt.Fprintf(w, `{"error": "%v"}`, respError)
+		// utils.SendErr(w, http.StatusInternalServerError)
+		return
+	}
+
+
 
 	err = db.Create(&contact).Error
 
