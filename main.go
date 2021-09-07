@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	
 	"github.com/luisalfredosv/golang-gorilla/routes"
 	"github.com/luisalfredosv/golang-gorilla/utils"
 	"github.com/gorilla/mux"
