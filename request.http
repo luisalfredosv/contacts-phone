@@ -1,0 +1,53 @@
+@hostname = localhost
+@port = 4000
+@protocol = http
+@host = {{protocol}}://{{hostname}}:{{port}}
+
+
+# Made in golang
+# Made by https://github.com/luisalfredosv
+# To make use of this request file it is necessary to install REST CLIENT in VsCode
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+### 
+# Get all contacts registrered
+GET {{host}}/api/contacts/ HTTP/1.1
+content-type: application/json
+
+###
+# Get contact by ID
+GET {{host}}/api/contacts/1 HTTP/1.1
+content-type: application/json
+
+###
+# Create new contact
+POST {{host}}/api/contacts/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Jhon Doe",
+    "age": 27,
+    "phone": "4444-444-4444",
+    "address": "New York",
+    "email": "jdoe@mail.com",
+    "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+
+}
+
+###
+# Update contact by ID
+PUT {{host}}/api/contacts/1 HTTP/1.1
+content-type: application/json
+
+{
+    "phone": "4444-444-4444",
+    "address": "New York",
+    "email": "jdoe@mail.com",
+    "description": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+}
+
+
+###
+# Delete contact by ID
+DELETE {{host}}/api/contacts/1 HTTP/1.1
+content-type: application/json
