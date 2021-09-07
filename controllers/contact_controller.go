@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetContact(w http.ResponseWrite, r *http.Request){
+func GetContact(w http.ResponseWriter, r *http.Request){
 	contact := models.Contact{}
 	id := mux.Vars(r)["id"]
 	db := utils.GetConnection()
@@ -20,11 +20,11 @@ func GetContact(w http.ResponseWrite, r *http.Request){
 		j, _ := json.Marshal(contact)
 		utils.SendResponse(w, http.StatusOK, j)
 	}else{
-		utils.SendErr(w, StatusNotFound)
+		utils.SendErr(w, http.StatusNotFound)
 	}
 }
 
-func GetContacts(w http.ResponseWrite, r *http.Request){
+func GetContacts(w http.ResponseWriter, r *http.Request){
 	contacts := []models.Contact{}
 	db := utils.GetConnection()
 	defer db.Close()
@@ -36,14 +36,14 @@ func GetContacts(w http.ResponseWrite, r *http.Request){
 
 }
 
-func StoreContact(w http.ResponseWrite, r *http.Request){
-	contact := []models.Contact{}
+func StoreContact(w http.ResponseWriter, r *http.Request){
+	contact := models.Contact{}
 	db := utils.GetConnection()
 	defer db.Close()
 
 	err := json.NewDecoder(r.Body).Decode(&contact)
 
-	if err != {
+	if err != nil {
 		fmt.Println(err)
 		utils.SendErr(w, http.StatusBadRequest)
 		return
@@ -61,9 +61,9 @@ func StoreContact(w http.ResponseWrite, r *http.Request){
 	utils.SendResponse(w, http.StatusCreated, j)
 }
 
-func UpdateContact(w http.ResponseWrite, r *http.Request){
-	contactFind := []models.Contact{}
-	contactData := []models.Contact{}
+func UpdateContact(w http.ResponseWriter, r *http.Request){
+	contactFind := models.Contact{}
+	contactData := models.Contact{}
 
 	id := mux.Vars(r)["id"]
 
@@ -82,16 +82,16 @@ func UpdateContact(w http.ResponseWrite, r *http.Request){
 			}
 
 		db.Model(&contactFind).Updates(contactData)
-		j, _ := json.Marshal(contact)
+		j, _ := json.Marshal(contactFind)
 		utils.SendResponse(w, http.StatusOK, j)
 
 	}else{
-		utils.SendErr(w, StatusNotFound)
+		utils.SendErr(w, http.StatusNotFound)
 	}
 
 }
 
-func DeleteContact(w http.ResponseWrite, r *http.Request){
+func DeleteContact(w http.ResponseWriter, r *http.Request){
 	contact := models.Contact{}
 
 	id := mux.Vars(r)["id"]
@@ -104,6 +104,6 @@ func DeleteContact(w http.ResponseWrite, r *http.Request){
 		db.Delete(contact)
 		utils.SendResponse(w, http.StatusOK, []byte(`{}`))
 	}else{
-		utils.SendErr(w, StatusNotFound)
+		utils.SendErr(w, http.StatusNotFound)
 	}
 }
