@@ -6,12 +6,12 @@ import (
 )
 
 func SetContactsRoutes(r *mux.Router){
-	subrouter := r.PathPrefix("/api").Subrouter()
+	subRouter := r.PathPrefix("/api").Subrouter()
 
-	subrouter.HandleFunc("/contacts/{id}", controllers.GetContact).Methods("GET")
-	subrouter.HandleFunc("/contacts/", controllers.GetContacts).Methods("GET")
-	subrouter.HandleFunc("/contacts/", controllers.StoreContact).Methods("POST")
-	subrouter.HandleFunc("/contacts/", controllers.UpdateContact).Methods("PUT")
-	subrouter.HandleFunc("/contacts/{id}", controllers.GetContact).Methods("DELETE")
+	subRouter.HandleFunc("/contacts/{id}", controllers.GetContact).Methods("GET")
+	subRouter.HandleFunc("/contacts/", controllers.GetContacts).Methods("GET")
+	subRouter.HandleFunc("/contacts/", controllers.StoreContact).Methods("POST")
+	subRouter.HandleFunc("/contacts/{id}", controllers.UpdateContact).Methods("PUT")
+	subRouter.HandleFunc("/contacts/{id}", controllers.DeleteContact).Methods("DELETE")
 
 }
