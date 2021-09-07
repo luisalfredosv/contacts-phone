@@ -1,0 +1,4 @@
+DB_DRIVER=mysql
+DB_USER=userDb
+DB_PASSWORD=passwordDb
+DB_DATABASE=nameDb
