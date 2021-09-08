@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/luisalfredosv/golang-gorilla/models"
 	"github.com/luisalfredosv/golang-gorilla/utils"
@@ -22,7 +21,7 @@ func GetContact(w http.ResponseWriter, r *http.Request){
 		j, _ := json.Marshal(contact)
 		utils.SendResponse(w, http.StatusOK, j)
 	}else{
-		utils.SendErr(w, http.StatusNotFound)
+		utils.SendResponse(w, http.StatusNotFound, []byte {})
 	}
 }
 
@@ -39,43 +38,33 @@ func GetContacts(w http.ResponseWriter, r *http.Request){
 }
 
 func StoreContact(w http.ResponseWriter, r *http.Request){
-	contact := models.Contact{}
+	contact := &models.Contact{}
 
 	db := utils.GetConnection()
 	defer db.Close()
 
 	err := json.NewDecoder(r.Body).Decode(&contact)
 
-	if err != nil {
-		fmt.Println(err)
-		utils.SendErr(w, http.StatusBadRequest)
+	// if err != nil {
+	// 	fmt.Println(err)
+		// utils.SendResponse(w, http.StatusBadRequest, []byte {})
+	// 	return
+	// }
+
+	if ok, errors := utils.ValidateInputs(*contact); !ok {
+		resp := models.ErrResponse {
+			Errors: errors,
+		}
+		j, _ := json.Marshal(resp)
+		utils.SendResponse(w, http.StatusUnprocessableEntity, j)
 		return
 	}
-
-	validate := validator.New()
-	err = validate.Struct(contact)
-	
-
-	if err != nil {
-		respError := make([]string, len(err.Error()))
-
-		// resp := models.ErrResponse {
-        //     Errors: ,
-        // }
-		// e := json.NewEncoder(w).Encode(resp.Errors)
-
-		fmt.Fprintf(w, `{"error": "%v"}`, respError)
-		// utils.SendErr(w, http.StatusInternalServerError)
-		return
-	}
-
-
 
 	err = db.Create(&contact).Error
 
 	if err != nil {
 		fmt.Println(err)
-		utils.SendErr(w, http.StatusInternalServerError)
+		utils.SendResponse(w, http.StatusInternalServerError, []byte {})
 		return
 	}
 
@@ -99,7 +88,7 @@ func UpdateContact(w http.ResponseWriter, r *http.Request){
 		err := json.NewDecoder(r.Body).Decode(&contactData)
 			
 			if err != nil {
-				utils.SendErr(w, http.StatusBadRequest)
+				utils.SendResponse(w, http.StatusBadRequest, []byte {})
 				return
 			}
 
@@ -108,7 +97,7 @@ func UpdateContact(w http.ResponseWriter, r *http.Request){
 		utils.SendResponse(w, http.StatusOK, j)
 
 	}else{
-		utils.SendErr(w, http.StatusNotFound)
+		utils.SendResponse(w, http.StatusNotFound, []byte {})
 	}
 
 }
@@ -126,6 +115,6 @@ func DeleteContact(w http.ResponseWriter, r *http.Request){
 		db.Delete(contact)
 		utils.SendResponse(w, http.StatusOK, []byte(`{}`))
 	}else{
-		utils.SendErr(w, http.StatusNotFound)
+		utils.SendResponse(w, http.StatusNotFound, []byte {})
 	}
 }
